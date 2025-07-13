@@ -1,0 +1,30 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest 
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Restore NuGet packages
+      run: nuget restore ShanghaiEXE.sln
+
+    - name: Build
+      run: |
+        msbuild ShanghaiEXE.sln `
+          /p:Configuration="Release Full Build" `
+          /p:Platform=x86 `
+          /m
+
+    - name: Archive build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ShanghaiEXE
+        path: |
+          **/Release/**    
